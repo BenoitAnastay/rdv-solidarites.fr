@@ -31,6 +31,7 @@ describe Admin::EditRdvForm, type: :form do
       expect(rdv.reload.status).to eq("waiting")
     end
 
+    # ToDelete
     it "set cancelled_at to nil when change status from cancel to other" do
       now = Time.zone.parse("2020-08-03 9h00")
 

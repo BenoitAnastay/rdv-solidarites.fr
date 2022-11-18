@@ -6,7 +6,7 @@
         h5.header.mb-1
           span
             = link_to rdv_title(rdv), admin_organisation_rdv_path(rdv.organisation, rdv)
-      - if current_organisation.territory.waiting_room_enabled?
+      - if current_organisation.territory.waiting_room_enabled? && rdv.status == "unknown"
         = link_to "salle d'attente", admin_organisation_rdv_user_in_waiting_room_path(rdv.organisation, rdv), method: :post, class: "btn btn-primary", remote: true
       = render "rdv_status_dropdown", rdv: rdv, agent: local_assigns[:agent], remote: true
   hr.my-0.mx-3

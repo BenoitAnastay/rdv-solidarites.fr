@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "redis"
+
 class CronJob < ApplicationJob
   # Cron jobs superclass
   # See https://github.com/codez/delayed_cron_job#custom-cronjob-superclass
@@ -99,6 +101,20 @@ class CronJob < ApplicationJob
       po_exceptionnelle_closed_since_1_year.or(po_reccurent_closed_since_1_year).each do |po|
         po.skip_webhooks = true
         po.destroy
+      end
+    end
+  end
+
+  class DestroyRedisWaitingRoomKeys < CronJob
+    redis_url = ENV.fetch("REDIS_URL", "redis://localhost:6379")
+    REDIS = Redis.new(url: redis_url)
+
+    # At 03:00 every day
+    self.cron_expression = "0 3 * * *"
+    # ToVerify
+    def perform
+      REDIS.keys("user_in_waiting_room_rdv_id:*").each do |k|
+        REDIS.del(k)
       end
     end
   end

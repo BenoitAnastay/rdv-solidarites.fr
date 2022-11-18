@@ -6,6 +6,7 @@ json.array! @rdvs do |rdv|
   json.extendedProps do
     json.organisationName rdv.organisation&.name
     json.status rdv.status
+    json.userInWaitingRoom rdv.user_in_waiting_room?
     json.readableStatus rdv.human_attribute_value(:status)
     json.motif rdv.motif.name
     json.lieu rdv.public_office? && rdv.lieu&.name
