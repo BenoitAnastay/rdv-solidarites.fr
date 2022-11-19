@@ -1,14 +1,21 @@
 # frozen_string_literal: true
 
 module SearchContextHelper
-  def path_to_motif_selection(params)
+  def path_to_service_selection(params)
     root_path(motif_selection(params))
+  end
+
+  def path_to_motif_selection(params)
+    root_path(motif_selection(params).merge(
+      service_id: params[:service_id],
+    ))
   end
 
   def path_to_lieu_selection(params)
     root_path(
       motif_selection(params).merge(
-        motif_name_with_location_type: params[:motif_name_with_location_type]
+        motif_name_with_location_type: params[:motif_name_with_location_type],
+        service_id: params[:service_id],
       )
     )
   end
@@ -17,7 +24,8 @@ module SearchContextHelper
     root_path(
       motif_selection(params).merge(
         motif_name_with_location_type: params[:motif_name_with_location_type],
-        lieu_id: params[:lieu_id]
+        lieu_id: params[:lieu_id],
+        service_id: params[:service_id],
       )
     )
   end
@@ -32,8 +40,8 @@ module SearchContextHelper
       latitude: params[:latitude],
       street_ban_id: params[:street_ban_id],
       address: params[:address],
-      service_id: params[:service_id],
       organisation_id: params[:organisation_id],
+      agent_id: params[:agent_id],
     }
   end
 end

@@ -1,5 +1,10 @@
 ---
 fr:
+  search:
+    nothing_to_show:
+      default: La prise de rendez-vous n'est pas disponible pour ce département.
+      agent_referent_without_available_slots: Aucun créneaux disponible pour votre agent référent.
+      invitation_html: Nous sommes désolés, un problème semble s'être produit pour votre invitation. <br/><a href="mailto:support@rdv-solidarites.fr?subject:[Problème invitation]" class="btn btn-primary"><span><i class="fa fa-envelope"></i>Envoyer une demande à l'équipe technique</span></a>
   admin:
     organisations:
       index:

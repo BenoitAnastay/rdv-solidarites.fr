@@ -2,7 +2,7 @@
 
 class SearchContext
   attr_reader :errors, :query, :departement, :address, :city_code, :street_ban_id, :latitude, :longitude,
-              :motif_name_with_location_type
+              :motif_name_with_location_type, :agent_id
 
   def initialize(current_user, query = {})
     @current_user = current_user
@@ -22,12 +22,13 @@ class SearchContext
     @service_id = query[:service_id]
     @lieu_id = query[:lieu_id]
     @start_date = query[:date]
+    @agent_id = query[:agent_id]
   end
 
   # *** Method that outputs the next step for the user to complete its rdv journey ***
   # *** It is used in #to_partial_path to render the matching partial view ***
   def current_step
-    if address.blank? && @organisation_id.blank?
+    if show_address_selection?
       :address_selection
     elsif !service_selected?
       :service_selection
@@ -38,6 +39,10 @@ class SearchContext
     else
       :creneau_selection
     end
+  end
+
+  def show_address_selection?
+    address.blank? && @organisation_id.blank? && @agent_id.blank?
   end
 
   def to_partial_path
@@ -59,7 +64,16 @@ class SearchContext
                    selected_motif.service
                  elsif services.count == 1
                    services.first
+                 elsif agent.present?
+                   agent.service
                  end
+    @service
+  end
+
+  def agent
+    @agent ||= if @current_user.present?
+                 @current_user.agents.where(id: @agent_id.to_i).first
+               end
   end
 
   def services
@@ -91,7 +105,7 @@ class SearchContext
   def lieux
     @lieux ||= \
       Lieu
-        .with_open_slots_for_motifs(@matching_motifs)
+        .with_open_slots_for_motifs(matching_motifs)
         .includes(:organisation)
         .sort_by { |lieu| lieu.distance(@latitude.to_f, @longitude.to_f) }
   end
@@ -186,8 +200,14 @@ class SearchContext
         filter_motifs(geo_search.available_motifs).presence || filter_motifs(
           Motif.available_with_plages_ouvertures.where(organisation_id: @fallback_organisation_ids)
         )
+      elsif agent.present?
+        filter_motifs(follow_up_motifs_of(agent))
       else
         filter_motifs(geo_search.available_motifs)
       end
+  end
+
+  def follow_up_motifs_of(agent)
+    Motif.active.reservable_online.where(follow_up: true).joins(:motifs_plage_ouvertures).where("motifs_plage_ouvertures.plage_ouverture_id": agent.plage_ouvertures.distinct.pluck(:id))
   end
 end

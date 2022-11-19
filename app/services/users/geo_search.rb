@@ -100,7 +100,7 @@ class Users::GeoSearch
   end
 
   def available_motifs_base
-    Motif.where(id: individual_motif + collective_motif).joins(:organisation)
+    Motif.where(id: individual_motif + collective_motif).where(follow_up: false).joins(:organisation)
   end
 
   def individual_motif
