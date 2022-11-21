@@ -23,5 +23,6 @@ class Admin::UserInWaitingRoomsController < AgentAuthController
       end
 
     end
+    redirect_to admin_organisation_rdv_user_in_waiting_room_path(rdv.organisation, rdv)
   end
 end

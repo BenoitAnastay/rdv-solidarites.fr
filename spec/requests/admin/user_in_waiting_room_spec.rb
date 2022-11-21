@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Admin::UserInWaitingRoom", type: :request do
+RSpec.describe "Admin::UserInWaitingRoomController", type: :request do
   include Rails.application.routes.url_helpers
 
   let(:organisation) { create(:organisation) }
@@ -14,7 +14,7 @@ RSpec.describe "Admin::UserInWaitingRoom", type: :request do
 
     it "is redirect" do
       create_request
-      expect(response).to redirect_to admin_organisation_rdv_path(rdv.organisation, rdv)
+      expect(response).to redirect_to admin_organisation_rdv_user_in_waiting_room_path(rdv.organisation, rdv)
     end
   end
 end
